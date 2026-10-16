@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cabriole</title>
+<style>
+:root{--bg:#faf7f2;--card:#fff;--tx:#2b2a28;--mu:#7a756c;--ac:#1f5c4a;--ac2:#e3f0ea;--gd:#e8a33d;--bd:#e5dfd3;--dg:#b3402f;--wa:#b36b00;--wa2:#fdf0d8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1c1a;--card:#262826;--tx:#efece6;--mu:#a09b90;--ac:#7fcfa8;--ac2:#243a30;--gd:#f0b955;--bd:#3a3d39;--dg:#e07a68;--wa:#e3b062;--wa2:#3d3322}}
+:root[data-theme="dark"]{--bg:#1b1c1a;--card:#262826;--tx:#efece6;--mu:#a09b90;--ac:#7fcfa8;--ac2:#243a30;--gd:#f0b955;--bd:#3a3d39;--dg:#e07a68;--wa:#e3b062;--wa2:#3d3322}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:640px;margin-inline:auto;padding:16px}
+.brand{display:flex;align-items:center;gap:10px;margin:0 0 2px}.brand b{font-size:26px;letter-spacing:.3px}.brand svg{flex:none}
+.sub{color:var(--mu);font-size:14px;margin-bottom:14px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tabs button{flex:1;padding:10px 4px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:600;font-size:15px}
+.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.t{font-weight:700;font-size:18px;color:var(--ac)}
+.mu{color:var(--mu);font-size:14px}
+.tag{display:inline-block;background:var(--ac2);color:var(--ac);border-radius:6px;padding:2px 8px;font-size:13px;font-weight:600}
+.note{margin-top:6px;font-size:14px}
+input,textarea,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;margin-bottom:8px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{padding:10px 14px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;font-weight:600}
+.btn.no{background:var(--dg)}
+.ic{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;width:38px;height:38px;font-size:16px}
+.del{background:none;border:0;color:var(--dg);font-size:14px;padding:4px}
+.hint{background:var(--ac2);border-radius:10px;padding:10px;font-size:14px;margin-bottom:10px}
+.st{border:0;border-radius:16px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700}
+.st.c{background:var(--ac2);color:var(--ac)}.st.a{background:var(--wa2);color:var(--wa)}.st.r{background:#f6dcd7;color:var(--dg)}
+.cnt{display:flex;gap:8px;margin-bottom:12px}
+.cnt div{flex:1;text-align:center;border-radius:10px;padding:8px;font-size:13px;font-weight:600}
+.cnt b{display:block;font-size:22px}
+.phone{border:2px dashed var(--bd);border-radius:14px;padding:12px;margin-bottom:12px}
+.phone .big{display:flex;gap:8px;margin-top:10px}.phone .big button{flex:1;padding:14px}
+.lines{margin-top:6px;font-size:14px}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.g3 input{margin:0}</style>
+</head>
+<body>
+<div class="brand"><svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1f5c4a"/><path d="M24 70 Q50 6 76 70" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="24" r="7" fill="#e8a33d"/></svg><b>Cabriole</b></div>
+<div class="sub">Concours · exemple rempli d'après la feuille de la coach – engagements, planning, camion</div>
+<div class="tabs"><button id="t1" class="on" onclick="tab(1)">Engagements</button><button id="t2" onclick="tab(2)">Planning</button><button id="t3" onclick="tab(3)">Camion</button></div>
+
+<div id="p1">
+  <div class="cnt" id="cnt"></div>
+  <div class="phone">
+    <div class="mu">📱 Aperçu côté cavalier (notification reçue)</div>
+    <select id="who" onchange="render()"></select>
+    <div id="rv"></div>
+  </div>
+  <div id="list"></div>
+  <div id="f1"></div>
+  <div id="rs" style="margin-top:6px"></div>
+  <div id="hl"></div>
+</div>
+
+<div id="p2" hidden>
+  <div class="hint">Un passage par tour : un cavalier à 2 tours apparaît deux fois, avec son propre horaire. Seuls les engagements confirmés sont listés.</div>
+  <div id="plan"></div>
+  <div id="f2"></div>
+</div>
+
+<div id="p3" hidden>
+  <div id="thint"></div>
+  <div id="truck"></div>
+</div>
+
+<script>
+var EP=["Poney 4","Poney 3","Poney 2","Poney 1","Prépa 70","Prépa 80","Prépa 90","Prépa 1m","Club 3","Club 2","Club 1","Club Élite"];
+var HAB={"Cavalier 17":["Email","Jango"],"Cavalier 10":["Opalina"],"Cavalier 01":["Lithium"],"Cavalier 22":["Rayan"],"Cavalier 07":["Daredevil"],"Cavalier 23":["LadyBug"],"Cavalier 11":["Daredevil","LPin"],"Cavalier 16":["Email"],"Cavalier 21":["Jango","LPin"],"Cavalier 02":["Ice"],"Cavalier 27":["Lulu"],"Cavalier 26":["Abel"],"Cavalier 13":["Demi Moore"],"Cavalier 33":["Fabaja"],"Cavalier 06":["Mylord"],"Cavalier 30":["Ice"],"Cavalier 12":["Jazmine"],"Cavalier 24":["Barakan","Jazmine"],"Cavalier 04":["Hermione"],"Cavalier 31":["Ile"],"Cavalier 19":["Tokyo"],"Cavalier 05":["Helios"],"Cavalier 25":["Barakan"],"Cavalier 32":["Toscane"],"Cavalier 28":["Orli"],"Cavalier 34":["Helios"],"Cavalier 03":["Mylord"]},HABV=1;
+var CL=["Cavalier 01","Cavalier 02","Cavalier 03","Cavalier 04","Cavalier 05","Cavalier 06","Cavalier 07","Cavalier 08","Cavalier 10","Cavalier 11","Cavalier 12","Cavalier 13","Cavalier 14","Cavalier 15","Cavalier 16","Cavalier 17","Cavalier 18","Cavalier 19","Cavalier 20","Cavalier 21","Cavalier 22","Cavalier 23","Cavalier 24","Cavalier 25","Cavalier 26","Cavalier 27","Cavalier 28","Cavalier 29","Cavalier 30","Cavalier 31","Cavalier 32","Cavalier 33","Cavalier 34"],CLV=1;
+var HL=["Abel","Bambi","Barakan","Daredevil","Demi Moore","Email","Fabaja","Fiston","Helios","Hermione","Ice","Ile","Indie","Jango","Jazmine","Kirby","LadyBug","Lartiga","Lithium","LPin","Lulu","Mylord","Nessos","Opalina","Orli","Rayan","Santo","Tokyo","Toscane","Urubu","Warcio"],HP=["Bety","Fara","Harissa","Ketupa","Maive","Tyrrell"],HLV=1;
+var D=[{"c":"Cavalier 11","h":"Daredevil","e":"Club 2","s":"c","p":"09:08","d":28,"n":""},{"c":"Cavalier 21","h":"Jango","e":"Club 1","s":"c","p":"09:32","d":32,"n":""},{"c":"Cavalier 22","h":"Rayan","e":"Club 2","s":"c","p":"09:36","d":26,"n":""},{"c":"Cavalier 05 B","h":"Helios","e":"Club 2","s":"c","p":"10:05","d":20,"n":""},{"c":"Cavalier 32","h":"Toscane","e":"Club 2","s":"c","p":"10:12","d":22,"n":""},{"c":"Cavalier 25","h":"Barakan","e":"Club 2","s":"c","p":"10:22","d":27,"n":""},{"c":"Cavalier 27","h":"Lulu","e":"Club 2","s":"c","p":"10:29","d":24,"n":""},{"c":"Cavalier 11","h":"LPin","e":"Club 2","s":"c","p":"10:40","d":25,"n":""},{"c":"Cavalier 28","h":"Orli","e":"Club 2","s":"c","p":"10:43","d":28,"n":""},{"c":"Cavalier 04","h":"Hermione","e":"Club 2","s":"c","p":"11:18","d":28,"n":""},{"c":"Cavalier 02","h":"Ice","e":"Club 2","s":"c","p":"11:40","d":20,"n":""},{"c":"Cavalier 06","h":"Mylord","e":"Club 2","s":"c","p":"11:47","d":27,"n":""},{"c":"Cavalier 32","h":"Toscane","e":"Club 3","s":"c","p":"11:47","d":17,"n":""},{"c":"Cavalier 16","h":"Email","e":"Club 3","s":"c","p":"12:01","d":21,"n":""},{"c":"Cavalier 22","h":"Rayan","e":"Club 3","s":"c","p":"13:45","d":20,"n":""},{"c":"Cavalier 01","h":"Lithium","e":"Club 3","s":"c","p":"14:06","d":16,"n":""},{"c":"Cavalier 09 S","h":"Fiston","e":"Club 3","s":"c","p":"14:05","d":20,"n":"⚠ Changement de cavalier. Cl3 : partie n°4 Zaheb non partant."},{"c":"Cavalier 02","h":"Ice","e":"Club 3","s":"c","p":"14:19","d":19,"n":""},{"c":"Cavalier 25","h":"Barakan","e":"Club 3","s":"c","p":"14:20","d":20,"n":""},{"c":"Cavalier 05 R","h":"Urubu","e":"Club 3","s":"c","p":"14:26","d":26,"n":""},{"c":"Cavalier 03","h":"Mylord","e":"Club 3","s":"c","p":"14:45","d":20,"n":""},{"c":"Cavalier 34","h":"Helios","e":"Club 3","s":"c","p":"15:06","d":16,"n":""},{"c":"Cavalier 04","h":"Hermione","e":"Club 3","s":"c","p":"15:13","d":18,"n":""},{"c":"Cavalier 27","h":"Lulu","e":"Club 3","s":"c","p":"15:20","d":20,"n":""},{"c":"Cavalier 17","h":"Email","e":"Épreuve à préciser","s":"c","p":"15:25","d":30,"n":""},{"c":"Cavalier 17","h":"Jango","e":"Épreuve à préciser","s":"c","p":"15:57","d":27,"n":"Seller dans la carrière de détente. Un cavalier promène le cheval en main sur le parking à 15h15, puis l'amène en détente à 15h30."}];
+var T=["Hermione","Lulu","Daredevil","Jango","Orli","Lithium","Ice","Barakan","Toscane","LPin","Fiston","Helios","Rayan","Urubu","Mylord","Email"],RL=[],TR=["Hermione","Lulu","Jango","Fiston","Orli","Toscane","Ice","Barakan","LPin","Urubu","Helios","Rayan","Daredevil","Lithium","Mylord","Email"],CD="a",CV=1,NV=4,V=[{"id":1,"name":"Camion Cavalier 26","type":"Camion","cap":6},{"id":2,"name":"Camion Sophie","type":"Camion","cap":10},{"id":3,"name":"Van Édouard","type":"Van","cap":2}],AA={"Hermione":1,"Lulu":1,"Daredevil":1,"Jango":1,"Orli":1,"Lithium":2,"Ice":2,"Barakan":2,"Toscane":2,"LPin":2,"Fiston":2,"Helios":2,"Rayan":2,"Urubu":2,"Mylord":2,"Email":3},AR={"Fiston":1,"Daredevil":2},TM={"1":{"a":{"l":"07:35","d":"07:45","r":"08:30"},"r":{"l":"16:10","d":"16:20","r":"17:00"}},"2":{"a":{"l":"07:50","d":"08:10","r":"08:55"},"r":{"l":"15:15","d":"15:25","r":"16:10"}},"3":{"a":{"l":"","d":"10:50","r":"11:20"},"r":{"l":"16:10","d":"16:20","r":"17:00"}}};
+try{var sv=localStorage.getItem("cc5");if(sv){var o=JSON.parse(sv);D=o.D;T=o.T;TR=o.TR||null;V=o.V;AA=o.AA;AR=o.AR;TM=o.TM;NV=o.NV||NV;if(o.HLV>=HLV){HL=o.HL||[];HP=o.HP||[];HLV=o.HLV}if(o.CLV>=CLV){CL=o.CL||[];CLV=o.CLV}if(o.HABV>=HABV){HAB=o.HAB||{};HABV=o.HABV}}}catch(e){}
+function save(){try{localStorage.setItem("cc5",JSON.stringify({D:D,T:T,TR:TR,V:V,AA:AA,AR:AR,TM:TM,NV:NV,HL:HL,HP:HP,HLV:HLV,CL:CL,CLV:CLV,HAB:HAB,HABV:HABV}))}catch(e){}}
+function g(i){return document.getElementById(i)}
+function tab(n){[1,2,3].forEach(function(i){g("p"+i).hidden=i!=n;g("t"+i).className=i==n?"on":""})}
+function mins(h){var a=h.split(":");return +a[0]*60+ +a[1]}
+function fmt(m){m=((m%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var L={c:"✔ Confirmé",a:"⏳ En attente",r:"✖ Refusé"};
+function opts(){return EP.map(function(e){return '<option'+(e=="Club 2"?' selected':'')+'>'+e+'</option>'}).join("")}
+function form(pf,times,title,btn){
+  function tour(k){return `<div class="mu" style="margin:4px 0">Tour ${k}</div><div class="g"><select id="${pf}e${k}" onchange="eh('${pf}',${k})">${opts()}</select>${hfield(pf,k)}</div>`+(times?`<div class="g"><div><div class="mu">Passage</div><input type="time" id="${pf}p${k}" value="09:00"></div><div><div class="mu">Détente (min avant)</div><input type="number" id="${pf}d${k}" value="30" min="0"></div></div>`:"")}
+  return `<div class="card"><b>${title}</b><div style="height:8px"></div><div class="g">${cfield(pf)}<select id="${pf}n" onchange="tg('${pf}')"><option value="1">1 tour</option><option value="2">2 tours</option><option value="3">3 tours</option></select></div>${tour(1)}<div id="${pf}t2" hidden><div class="mu" style="margin-bottom:6px">Même épreuve avec un autre cheval, ou autre épreuve (même cheval ou non).</div>${tour(2)}</div><div id="${pf}t3" hidden><div class="mu" style="margin-bottom:6px">Troisième passage.</div>${tour(3)}</div><input id="${pf}o" placeholder="Précisions"><button class="btn" onclick="addF('${pf}',${times})">${btn}</button></div>`}
+function cfield(pf){
+  var sn=`<input id="${pf}cn" placeholder="Nom de famille ou initiale (si doublon)" style="margin:0">`;
+  if(!CL.length)return `<div><input id="${pf}c" placeholder="Cavalier" style="margin:0 0 8px">${sn}</div>`;
+  return `<div><select id="${pf}cs" onchange="cs('${pf}')" style="margin:0 0 8px"><option value="">Cavalier…</option>${CL.map(function(h){return '<option>'+esc(h)+'</option>'}).join("")}<option value="__autre">Autre cavalier…</option></select><input id="${pf}c" placeholder="Prénom" hidden style="margin:0 0 8px">${sn}</div>`}
+function cs(pf){g(pf+"c").hidden=g(pf+"cs").value!="__autre";ah(pf)}
+function cv(pf){var s=g(pf+"cs"),b=s?(s.value=="__autre"?g(pf+"c").value:s.value):g(pf+"c").value;b=b.trim();if(!b)return "";var n=g(pf+"cn").value.trim();return n?b+" "+n:b}
+function cclear(pf){var s=g(pf+"cs");g(pf+"c").value="";g(pf+"cn").value="";if(s){s.value="";g(pf+"c").hidden=true;ah(pf)}}
+function saveCL(){var C=[];g("clt").value.split("\n").forEach(function(x){x=x.trim();if(x&&C.indexOf(x)<0)C.push(x)});CL=C.sort(function(a,b){return a.localeCompare(b,"fr")});CLV=1000;buildForms();save()}
+function hopts(po,hab){
+  var o=function(a){return a.map(function(h){return '<option>'+esc(h)+'</option>'}).join("")};
+  var c=HL.length?'<optgroup label="Chevaux">'+o(HL)+'</optgroup>':"",p=HP.length?'<optgroup label="Poneys">'+o(HP)+'</optgroup>':"";
+  return (hab&&hab.length?'<optgroup label="Habituels">'+o(hab)+'</optgroup>':"")+(po?p+c:c+p)}
+function habs(pf){var s=g(pf+"cs"),b=s&&s.value&&s.value!="__autre"?s.value:"";return HAB[b]||[]}
+function ah(pf){var hab=habs(pf);for(var k=1;k<=3;k++){var s=g(pf+"h"+k+"s");if(!s)continue;var cur=s.value,auto=(cur===""||cur===s._auto),nv=auto?(k==1?(hab[0]||""):""):cur;s._auto=(auto&&k==1&&nv)?nv:undefined;var po=g(pf+"e"+k).value.indexOf("Poney")==0;s.innerHTML='<option value="">Cheval…</option>'+hopts(po,hab)+'<option value="__autre">Autre cheval…</option>';s.value=nv;hs(pf,k)}}
+function habText(){return Object.keys(HAB).filter(function(k){return HAB[k].length}).sort(function(a,b){return a.localeCompare(b,"fr")}).map(function(k){return k+" - "+HAB[k].join(" et ")}).join("\n")}
+function saveHAB(){var all={};HL.concat(HP).forEach(function(h){all[h.toLowerCase()]=h});var cl={};CL.forEach(function(c){cl[c.toLowerCase()]=c});var H={};
+  g("hbt").value.split("\n").forEach(function(l){var m=l.split(/\s+-\s+/);if(m.length<2)return;var n=m[0].trim();n=cl[n.toLowerCase()]||n;var hs=m.slice(1).join(" - ").split(/\s+et\s+|\s*,\s*/).map(function(x){x=x.trim();return all[x.toLowerCase()]||x}).filter(Boolean);if(n&&hs.length)H[n]=hs});
+  HAB=H;HABV=1000;buildForms();save()}
+function hfield(pf,k){
+  if(!HL.length&&!HP.length)return `<input id="${pf}h${k}" placeholder="Cheval">`;
+  return `<div><select id="${pf}h${k}s" onchange="hs('${pf}',${k})" style="margin:0 0 8px"><option value="">Cheval…</option>${hopts(false,[])}<option value="__autre">Autre cheval…</option></select><input id="${pf}h${k}" placeholder="Nom du cheval" hidden style="margin:0"></div>`}
+function eh(pf,k){var s=g(pf+"h"+k+"s");if(!s)return;var cur=s.value,po=g(pf+"e"+k).value.indexOf("Poney")==0;
+  s.innerHTML='<option value="">Cheval…</option>'+hopts(po,habs(pf))+'<option value="__autre">Autre cheval…</option>';s.value=cur;hs(pf,k)}
+function hs(pf,k){g(pf+"h"+k).hidden=g(pf+"h"+k+"s").value!="__autre"}
+function hv(pf,k){var s=g(pf+"h"+k+"s");if(s)return s.value=="__autre"?g(pf+"h"+k).value.trim():s.value;return g(pf+"h"+k).value.trim()}
+function hclear(pf,k){var s=g(pf+"h"+k+"s");g(pf+"h"+k).value="";if(s){s.value="";s._auto=undefined;g(pf+"h"+k).hidden=true}}
+function saveHL(){var C=[],P=[],pm=false;g("hlt").value.split("\n").forEach(function(x){x=x.trim();if(!x)return;if(/^[-#=\s]*poneys?[-#=\s]*$/i.test(x)){pm=true;return}var A=pm?P:C;if(A.indexOf(x)<0)A.push(x)});
+  var srt=function(a,b){return a.localeCompare(b,"fr")};HL=C.sort(srt);HP=P.sort(srt);HLV=1000;buildForms();save()}
+function buildForms(){
+  g("f1").innerHTML=form("a",false,"Ajouter un engagement (en attente)","Ajouter");
+  g("f2").innerHTML=form("b",true,"Ajouter un cavalier au planning","Ajouter (confirmé)");
+  g("hl").innerHTML=`<div class="card"><b>Chevaux habituels (${Object.keys(HAB).length} cavaliers)</b><div class="mu" style="margin:4px 0 8px">Une ligne par cavalier : Prénom - Cheval, ou Prénom - Cheval1 et Cheval2. Le cheval est proposé dès qu'on choisit le cavalier.</div><textarea id="hbt" rows="10">${esc(habText())}</textarea><button class="btn" onclick="saveHAB()">Enregistrer</button></div>`+`<div class="card"><b>Cavaliers du club (${CL.length})</b><div class="mu" style="margin:4px 0 8px">Un prénom par ligne. Pour deux prénoms identiques, ajoute l'initiale ou le nom (par exemple Prénom A et Prénom B).</div><textarea id="clt" rows="8">${esc(CL.join("\n"))}</textarea><button class="btn" onclick="saveCL()">Enregistrer la liste</button></div>`+`<div class="card"><b>Chevaux et poneys du club (${HL.length} + ${HP.length})</b><div class="mu" style="margin:4px 0 8px">Un nom par ligne. Les poneys se placent sous la ligne « -- Poneys -- ». Ils s'affichent ensuite dans une liste déroulante.</div><textarea id="hlt" rows="10">${esc(HL.join("\n")+(HP.length?"\n\n-- Poneys --\n"+HP.join("\n"):""))}</textarea><button class="btn" onclick="saveHL()">Enregistrer la liste</button></div>`}
+function tg(pf){var n=+g(pf+"n").value;g(pf+"t2").hidden=n<2;g(pf+"t3").hidden=n<3}
+function addF(pf,times){
+  var c=cv(pf),n=+g(pf+"n").value;if(!c)return;
+  for(var k=1;k<=n;k++){if(!hv(pf,k))return}
+  for(k=1;k<=n;k++){D.push({c:c,h:hv(pf,k),e:g(pf+"e"+k).value,s:times?"c":"a",p:times?g(pf+"p"+k).value:"",d:times?(+g(pf+"d"+k).value||0):30,n:k==1?g(pf+"o").value:""})}
+  cclear(pf);g(pf+"o").value="";for(k=1;k<=3;k++)hclear(pf,k);render()}
+function ps(c){return D.filter(function(x){return x.c==c})}
+function setS(ri,v){var c=RL[ri];D.forEach(function(x){if(x.c==c)x.s=v});render()}
+function cyc(ri){var s=ps(RL[ri])[0].s;setS(ri,s=="a"?"c":s=="c"?"r":"a")}
+function rmR(ri){var c=RL[ri];D=D.filter(function(x){return x.c!=c});render()}
+function rm(i){D.splice(i,1);render()}
+function setP(i,v){D[i].p=v;render()}
+function setD(i,v){D[i].d=+v||0;render()}
+function lines(c){return ps(c).map(function(x,k,a){return `<div class="lines">Tour ${k+1} · <b>${esc(x.e)}</b> · ${esc(x.h)}${x.n?' <span class="mu">— '+esc(x.n)+'</span>':''}</div>`}).join("")}
+function render(){
+  RL=[];D.forEach(function(x){if(RL.indexOf(x.c)<0)RL.push(x.c)});
+  var n={c:0,a:0,r:0};RL.forEach(function(c){n[ps(c)[0].s]++});
+  g("cnt").innerHTML=`<div class="st c"><b>${n.c}</b>confirmés</div><div class="st a"><b>${n.a}</b>en attente</div><div class="st r"><b>${n.r}</b>refusés</div>`;
+  var cur=Math.max(0,Math.min(+g("who").value||0,RL.length-1));
+  g("who").innerHTML=RL.map(function(c,i){return `<option value="${i}"${i==cur?" selected":""}>${esc(c)}</option>`}).join("");
+  var r=RL[cur];
+  g("rv").innerHTML=r?`<div><b>Concours</b><div class="mu">${esc(r)} · ${ps(r).length} tour${ps(r).length>1?"s":""}</div>${lines(r)}</div>`+(ps(r)[0].s=="a"?`<div class="big"><button class="btn" onclick="setS(${cur},'c')">Je confirme</button><button class="btn no" onclick="setS(${cur},'r')">Je ne viens pas</button></div>`:`<div style="margin-top:8px"><span class="st ${ps(r)[0].s}">${L[ps(r)[0].s]}</span> <button class="del" onclick="setS(${cur},'a')">Modifier</button></div>`):"";
+  g("list").innerHTML=RL.map(function(c,i){var s=ps(c)[0].s;return `<div class="card"><div class="row"><div><b>${esc(c)}</b><div class="mu">${ps(c).length} tour${ps(c).length>1?"s":""}</div></div><button class="st ${s}" onclick="cyc(${i})">${L[s]}</button></div>${lines(c)}<button class="del" onclick="rmR(${i})">Supprimer le cavalier</button></div>`}).join("")||'<div class="mu">Aucun engagement.</div>';
+  var C=D.map(function(x,i){return{x:x,i:i}}).filter(function(o){return o.x.s=="c"}).sort(function(a,b){return(a.x.p?mins(a.x.p):9999)-(b.x.p?mins(b.x.p):9999)});
+  g("plan").innerHTML=C.map(function(o){var x=o.x,all=ps(x.c),k=all.indexOf(x)+1;return `<div class="card"><div class="row"><div><b>${esc(x.c)}</b> · ${esc(x.h)}<div class="mu">${esc(x.e)}${all.length>1?" · tour "+k+"/"+all.length:""}</div></div><div style="text-align:right">${x.p?'<span class="tag">Détente '+fmt(mins(x.p)-x.d)+'</span>':'<span class="mu">heure à définir</span>'}</div></div><div class="g" style="margin-top:8px"><div><div class="mu">Passage</div><input type="time" value="${x.p}" onchange="setP(${o.i},this.value)" style="margin:0"></div><div><div class="mu">Détente (min avant)</div><input type="number" value="${x.d}" min="0" onchange="setD(${o.i},this.value)" style="margin:0"></div></div>${x.n?'<div class="note">📝 '+esc(x.n)+'</div>':""}<button class="del" onclick="rm(${o.i})">Supprimer</button></div>`}).join("")||'<div class="mu">Aucun engagement confirmé.</div>';
+  var hs=[];C.forEach(function(o){if(hs.indexOf(o.x.h)<0)hs.push(o.x.h)});
+  T=T.filter(function(h){return hs.indexOf(h)>-1});
+  hs.forEach(function(h){if(T.indexOf(h)<0)T.push(h)});
+  if(TR){TR=TR.filter(function(h){return hs.indexOf(h)>-1});hs.forEach(function(h){if(TR.indexOf(h)<0)TR.push(h)})}
+  if(!vv(CV))CV=V[0].id;
+  var M=tm(CV)[CD],cv=vv(CV),VL=vlist(CV,CD),over=VL.length>cv.cap,free=[];
+  ["Camion","Van"].forEach(function(t){if(V.filter(function(v){return v.type==t}).length<2)free.push(t)});
+  g("thint").innerHTML=`<div class="hint">${CD=="a"?"Le premier de la liste monte en premier. Mets en dernier le cheval qui passe en premier : il sort en premier.":"Par défaut, mêmes véhicules et même ordre que l'aller. Modifie-les si besoin."}${CD=="r"&&(TR||Object.keys(AR).length)?' <button class="del" onclick="resetR()">Rétablir comme l\'aller</button>':""}</div>`;
+  g("truck").innerHTML=`<select id="veh" onchange="setCV(this.value)">`+V.map(function(v){return `<option value="${v.id}"${v.id==CV?" selected":""}>${esc(v.name)} (${vlist(v.id,CD).length} chevaux)</option>`}).join("")+`</select>`
+  +(free.length?`<div class="g" style="margin-bottom:10px"><select id="addv" style="margin:0">`+free.map(function(t){return `<option>${t}</option>`}).join("")+`</select><button class="btn" onclick="addV()">+ Ajouter</button></div>`:"")
+  +`<div class="tabs"><button class="${CD=="a"?"on":""}" onclick="setCD('a')">Aller</button><button class="${CD=="r"?"on":""}" onclick="setCD('r')">Retour</button></div><div class="card"><div class="g3"><div><div class="mu">Chargement</div><input type="time" value="${M.l}" onchange="setM('l',this.value)"></div><div><div class="mu">Départ</div><input type="time" value="${M.d}" onchange="setM('d',this.value)"></div><div><div class="mu">Arrivée</div><input type="time" value="${M.r}" onchange="setM('r',this.value)"></div></div></div>`
+  +`<div class="card"><div class="g"><input value="${esc(cv.name)}" onchange="setVN(this.value)" style="margin:0"><input type="number" value="${cv.cap}" min="1" onchange="setVC(this.value)" style="margin:0" placeholder="Places"></div><div class="row" style="margin-top:8px"><span class="mu"${over?' style="color:var(--dg)"':""}>${VL.length} / ${cv.cap} chevaux${over?" – trop de chevaux":""}</span>${V.length>1?'<button class="del" onclick="delV()">Supprimer ce véhicule</button>':""}</div></div>`
+  +(VL.map(function(h,i){var P=C.filter(function(o){return o.x.h==h}).map(function(o){return o.x});var who=P.map(function(x){return x.c}).filter(function(v,j,a){return a.indexOf(v)==j}).join(", ");var first=P.filter(function(x){return x.p}).map(function(x){return x.p}).sort()[0];return `<div class="card"><div class="row"><div><span class="tag">${i+1}</span> <b>${esc(h)}</b><div class="mu">${esc(who)}${first?" · 1er passage "+first:""}</div></div><div><button class="ic" onclick="mv(${i},-1)">↑</button> <button class="ic" onclick="mv(${i},1)">↓</button></div></div>`+(V.length>1?`<select onchange="toV(${i},this.value)" style="margin:8px 0 0"><option value="">Changer de véhicule…</option>`+V.filter(function(v){return v.id!=CV}).map(function(v){return `<option value="${v.id}">→ ${esc(v.name)}</option>`}).join("")+`</select>`:"")+`</div>`}).join("")||'<div class="mu">Aucun cheval dans ce véhicule.</div>');
+  g("rs").innerHTML='<button class="del" onclick="resetAll()">'+(RS?"Confirmer : tout effacer":"Nouveau concours (tout effacer)")+'</button>';
+  save()}
+function vv(id){return V.filter(function(v){return v.id==id})[0]}
+function effV(h,d){var x=d=="a"?AA[h]:(AR[h]||AA[h]);return vv(x)?x:V[0].id}
+function vlist(id,d){return (d=="a"?T:(TR||T)).filter(function(h){return effV(h,d)==id})}
+function tm(id){if(!TM[id])TM[id]={a:{l:"",d:"",r:""},r:{l:"",d:"",r:""}};return TM[id]}
+function mv(i,d){var L=vlist(CV,CD),j=i+d;if(j<0||j>=L.length)return;var A=CD=="a"?T:(TR||(TR=T.slice())),a=A.indexOf(L[i]),b=A.indexOf(L[j]),t=A[a];A[a]=A[b];A[b]=t;render()}
+function toV(i,v){if(!v)return;var h=vlist(CV,CD)[i];if(CD=="a")AA[h]=+v;else AR[h]=+v;render()}
+function setCD(d){CD=d;render()}
+function setCV(v){CV=+v;render()}
+function setM(k,v){tm(CV)[CD][k]=v;save()}
+function setVN(v){if(v.trim())vv(CV).name=v.trim();render()}
+function setVC(v){vv(CV).cap=Math.max(1,+v||1);render()}
+function addV(){var t=g("addv").value,n=1;while(V.some(function(v){return v.name==t+" "+n}))n++;var id=NV++;V.push({id:id,name:t+" "+n,type:t,cap:t=="Van"?2:6});CV=id;render()}
+function delV(){if(V.length<2)return;V=V.filter(function(v){return v.id!=CV});delete TM[CV];CV=V[0].id;render()}
+function resetR(){TR=null;AR={};render()}
+var RS=false;
+function resetAll(){if(!RS){RS=true;render();return}RS=false;D=[];T=[];TR=null;AA={};AR={};Object.keys(TM).forEach(function(k){TM[k]={a:{l:"",d:"",r:""},r:{l:"",d:"",r:""}}});render()}
+buildForms();
+render();
+</script>
+</body>
+</html>
